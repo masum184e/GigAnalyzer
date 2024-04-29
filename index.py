@@ -1,7 +1,8 @@
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
-def scrape_gig_details(url):
+def scrape_gig_details(url, data):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
     }
@@ -22,8 +23,10 @@ def scrape_gig_details(url):
                 tag_text = tag.find("a").text
                 tag_list.append(tag_text)
 
-        # with open('output.txt', 'a') as file:
-        #     file.write(f"{','.join(tag_list)},")
+        with open('keyword.txt', 'a') as file:
+            file.write(f"{','.join(tag_list)},")
+
+        data.append([title, number_of_order, price, ', '.join(tag_list)])
 
         output = "{:<50} {:<10} {:<10} {}".format(title[:50], number_of_order[:10], price[:10], ', '.join(tag_list))
         print(output)
@@ -37,17 +40,23 @@ def scrape_fiverr_gigs(keyword):
     }
     response = requests.get(url, headers=headers)
 
+    data = []
     if response.ok:
         soup = BeautifulSoup(response.text, 'html.parser')
         gigs = soup.find_all('div', class_='gig-wrapper')
         
-        print("                         Title                    | Order   | Price     | Tags")
         for gig in gigs:
             title = gig.find('p', role='heading').string
             url = title.parent.parent.get("href").split('?')[0]
-            scrape_gig_details(url)
+            scrape_gig_details(url, data)
     else:
         print("Failed to retrieve List")
+    
+    # Create DataFrame
+    df = pd.DataFrame(data, columns=['Title', 'Number of Orders', 'Price', 'Tags'])
+    
+    # Export to Excel
+    df.to_excel('gig_details.xlsx', index=False)
 
 keyword = input("Enter keyword to search Fiverr gigs: ")
 scrape_fiverr_gigs(keyword)

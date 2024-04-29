@@ -22,7 +22,9 @@ def scrape_gig_details(url):
                 tag_text = tag.find("a").text
                 tag_list.append(tag_text)
 
-        # Format the output
+        # with open('output.txt', 'a') as file:
+        #     file.write(f"{','.join(tag_list)},")
+
         output = "{:<50} {:<10} {:<10} {}".format(title[:50], number_of_order[:10], price[:10], ', '.join(tag_list))
         print(output)
     else:

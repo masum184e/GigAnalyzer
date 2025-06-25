@@ -1,5 +1,6 @@
 import streamlit as st
 from interface import Interface
+from fetcher import Fetcher
 
 st.set_page_config(
     page_title="GigAnalyzer",
@@ -38,6 +39,7 @@ st.markdown("""
 
 def main():
     interface = Interface()
+    fetcher = Fetcher()
     st.markdown('<h1 class="main-header">GigAnalyzer</h1>', unsafe_allow_html=True)
 
     with st.sidebar:
@@ -61,6 +63,7 @@ def main():
         st.button("🚀 Start Analysis", type="primary", use_container_width=True)
 
     interface.show_welcome_screen()
+    data = fetcher.fetch_mock_data(keywords_input)
 
 
 if __name__ == "__main__":

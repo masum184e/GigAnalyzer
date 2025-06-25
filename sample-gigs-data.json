@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Professional Logo Design - Branding",
+    "description": "Get a modern and minimalist logo tailored to your brand.",
+    "tags": ["branding", "logo-design", "creative", "minimalist", "branding"],
+    "completed_orders": 142,
+    "price": 25
+  },
+  {
+    "title": "Build Your Website from Scratch - HTML",
+    "description": "I will develop a fully responsive and fast-loading website.",
+    "tags": ["web-development", "html", "responsive", "css", "frontend"],
+    "completed_orders": 87,
+    "price": 55
+  },
+  {
+    "title": "SEO Optimized Content Writing - Blog",
+    "description": "High-quality blog posts written with SEO best practices.",
+    "tags": ["blog-writing", "seo", "keywords", "copywriting", "articles"],
+    "completed_orders": 210,
+    "price": 35
+  },
+  {
+    "title": "Engaging Social Media Marketing",
+    "description": "Manage and grow your social presence with engaging content.",
+    "tags": ["social-media", "marketing", "instagram", "engagement", "growth"],
+    "completed_orders": 95,
+    "price": 45
+  },
+  {
+    "title": "Custom Explainer Video Animation",
+    "description": "Create stunning 2D animations to explain your service or product.",
+    "tags": ["animation", "explainer-video", "2d", "motion-graphics", "video"],
+    "completed_orders": 123,
+    "price": 120
+  }
+]

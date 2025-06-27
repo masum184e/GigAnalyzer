@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from typing import List, Dict, Any, Tuple
+from collections import Counter, defaultdict
 import config
 
 class DataProcessor:
@@ -8,6 +9,7 @@ class DataProcessor:
         self.gigs_data = gigs_data
         self.df = self._create_dataframe()
         self.all_tags = self._extract_all_tags()
+        self.tag_counter = Counter(self.all_tags)
 
     def _create_dataframe(self) -> pd.DataFrame:
         df = []
@@ -81,3 +83,22 @@ class DataProcessor:
             'max': orders.max(),
             'total': orders.sum()
         }
+
+    def get_keyword_correlations(self, min_cooccurrence: int = 2) -> List[Tuple[str, str, int]]:
+        co_occurrence = defaultdict(lambda: defaultdict(int))
+        
+        for gig in self.gigs_data:
+            gig_tags = gig['tags']
+            for i, tag1 in enumerate(gig_tags):
+                for j, tag2 in enumerate(gig_tags):
+                    if i != j:
+                        co_occurrence[tag1][tag2] += 1
+        
+        correlations = []
+        for tag1, related_tags in co_occurrence.items():
+            for tag2, count in related_tags.items():
+                if tag1 < tag2 and count >= min_cooccurrence:
+                    correlations.append((tag1, tag2, count))
+        
+        correlations.sort(key=lambda x: x[2], reverse=True)
+        return correlations

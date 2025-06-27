@@ -1,4 +1,6 @@
 import streamlit as st
+import pandas as pd
+from visualizer import Visualizer
 
 class Interface:
     def show_welcome_screen(self):
@@ -22,6 +24,7 @@ class Interface:
             return
 
         processor = st.session_state.processor
+        visualizer = Visualizer(processor)
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
@@ -64,7 +67,7 @@ class Interface:
         with tab1:
             self._show_overview_tab(processor)
         with tab2:
-            st.subheader("Keyword Analysis")
+            self._show_keywords_tab(processor, visualizer)
         with tab3:
             st.subheader("Pricing Analysis")
         with tab4:
@@ -90,4 +93,24 @@ class Interface:
             order_stats = processor.get_order_statistics()
             for key, value in order_stats.items():
                 st.write(f"**{key.title()}**: {value:,.0f}")
+    
+    def _show_keywords_tab(self, processor, visualizer):
+        st.subheader("Keyword Analysis")
+        col1, col2 = st.columns(2)
 
+        with col1:
+            top_keywords_fig = visualizer.create_top_keywords_chart(top_n=10)
+            st.plotly_chart(top_keywords_fig, use_container_width=True)
+    
+        with col2:
+            keyword_dist_fig = visualizer.create_keyword_distribution_pie()
+            st.plotly_chart(keyword_dist_fig, use_container_width=True)
+    
+        st.subheader("Keyword Correlations")
+        correlation_fig = visualizer.create_keyword_correlation_chart()
+        st.plotly_chart(correlation_fig, use_container_width=True)
+
+        st.subheader("Keyword Frequency Table")
+        keyword_freq = processor.get_keyword_frequency()
+        keyword_df = pd.DataFrame(list(keyword_freq.items()), columns=['Keyword', 'Frequency'])
+        st.dataframe(keyword_df, use_container_width=True)

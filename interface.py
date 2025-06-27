@@ -20,7 +20,7 @@ class Interface:
         if not st.session_state.processor:
             st.error("No analysis data available. Please run the analysis first.")
             return
-            
+
         processor = st.session_state.processor
         col1, col2, col3, col4 = st.columns(4)
 
@@ -54,3 +54,40 @@ class Interface:
                 value=unique_tags,
                 delta=None
             )
+
+
+        st.subheader("Analysis Summary")
+        tab1, tab2, tab3, tab4, tab5 = st.tabs([
+            "📈 Overview", "🏷️ Keywords", "💰 Pricing", "📊 Advanced", "📥 Downloads"
+        ])
+
+        with tab1:
+            self._show_overview_tab(processor)
+        with tab2:
+            st.subheader("Keyword Analysis")
+        with tab3:
+            st.subheader("Pricing Analysis")
+        with tab4:
+            st.subheader("Advanced Analytics")
+        with tab5:
+            st.subheader("Download Reports")
+
+    def _show_overview_tab(self, processor):
+        st.subheader("Data Overview")
+        df = processor.get_dataframe()
+        st.dataframe(df.head(10), use_container_width=True)
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.subheader("Price Statistics")
+            price_stats = processor.get_price_statistics()
+            for key, value in price_stats.items():
+                st.write(f"**{key.title()}**: ${value:.2f}")
+
+        with col2:
+            st.subheader("Order Statistics")
+            order_stats = processor.get_order_statistics()
+            for key, value in order_stats.items():
+                st.write(f"**{key.title()}**: {value:,.0f}")
+

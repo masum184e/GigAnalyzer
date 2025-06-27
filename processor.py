@@ -58,3 +58,26 @@ class DataProcessor:
     
     def get_unique_tags(self) -> List[str]:
         return list(set(self.all_tags))
+    
+    def get_price_statistics(self) -> Dict[str, float]:
+        prices = self.df['price']
+        return {
+            'mean': prices.mean(),
+            'median': prices.median(),
+            'std': prices.std(),
+            'min': prices.min(),
+            'max': prices.max(),
+            'q1': prices.quantile(0.25),
+            'q3': prices.quantile(0.75)
+        }
+    
+    def get_order_statistics(self) -> Dict[str, float]:
+        orders = self.df['completed_orders']
+        return {
+            'mean': orders.mean(),
+            'median': orders.median(),
+            'std': orders.std(),
+            'min': orders.min(),
+            'max': orders.max(),
+            'total': orders.sum()
+        }

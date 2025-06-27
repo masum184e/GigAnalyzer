@@ -20,4 +20,37 @@ class Interface:
         if not st.session_state.processor:
             st.error("No analysis data available. Please run the analysis first.")
             return
-        st.subheader("📊 Analysis Summary")
+            
+        processor = st.session_state.processor
+        col1, col2, col3, col4 = st.columns(4)
+
+        with col1:
+            st.metric(
+                label="Total Gigs",
+                value=len(st.session_state.gigs_data),
+                delta=None
+            )
+    
+        with col2:
+            avg_price = processor.get_average_price()
+            st.metric(
+                label="Average Price",
+                value=f"${avg_price:.2f}",
+                delta=None
+            )
+    
+        with col3:
+            gigs_summary = processor.get_summary_statistics()
+            st.metric(
+                label="Total Tags",
+                value=f"{gigs_summary['total_tags']:,}",
+                delta=None
+            )
+    
+        with col4:
+            unique_tags = len(processor.get_unique_tags())
+            st.metric(
+                label="Unique Tags",
+                value=unique_tags,
+                delta=None
+            )

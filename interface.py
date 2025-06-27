@@ -15,3 +15,9 @@ class Interface:
                 </ul>
             </div>
         """, unsafe_allow_html=True)
+    
+    def show_analysis_results(self):
+        if not st.session_state.processor:
+            st.error("No analysis data available. Please run the analysis first.")
+            return
+        st.subheader("📊 Analysis Summary")

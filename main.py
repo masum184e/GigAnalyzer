@@ -1,6 +1,6 @@
 import streamlit as st
 from interface import Interface
-from fetcher import Fetcher
+from analyzer import Analyzer
 
 st.set_page_config(
     page_title="GigAnalyzer",
@@ -37,9 +37,19 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+def initialize_session_state():
+    if 'analysis_complete' not in st.session_state:
+        st.session_state.analysis_complete = False
+    if 'gigs_data' not in st.session_state:
+        st.session_state.gigs_data = []
+    if 'processor' not in st.session_state:
+        st.session_state.processor = None
+
 def main():
     interface = Interface()
-    fetcher = Fetcher()
+    analyzer = Analyzer()
+    initialize_session_state()
+
     st.markdown('<h1 class="main-header">GigAnalyzer</h1>', unsafe_allow_html=True)
 
     with st.sidebar:
@@ -60,11 +70,13 @@ def main():
         export_excel = st.checkbox("Excel Report", value=True)
         export_txt = st.checkbox("Text Reports", value=True)
         
-        st.button("🚀 Start Analysis", type="primary", use_container_width=True)
+        if st.button("🚀 Start Analysis", type="primary", use_container_width=True):
+            analyzer.run_analysis(keywords_input)
 
-    interface.show_welcome_screen()
-    data = fetcher.fetch_mock_data(keywords_input)
-
+    if not st.session_state.analysis_complete:
+        interface.show_welcome_screen()
+    else:
+        interface.show_analysis_results()
 
 if __name__ == "__main__":
     main()

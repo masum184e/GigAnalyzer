@@ -4,8 +4,10 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.prompts import ChatPromptTemplate
 from typing import List, Dict, Any
 from decouple import config
+import streamlit as st
 
-GOOGLE_API_KEY = config('GOOGLE_API_KEY')
+# GOOGLE_API_KEY = config('GOOGLE_API_KEY')
+GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 class Intelligence:
     def __init__(self):

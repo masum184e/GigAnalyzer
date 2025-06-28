@@ -1,6 +1,10 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
+import os
 from visualizer import Visualizer
+import io
+import zipfile
 
 class Interface:
     def show_welcome_screen(self):
@@ -60,8 +64,8 @@ class Interface:
 
 
         st.subheader("Analysis Summary")
-        tab1, tab2, tab3, tab4, tab5 = st.tabs([
-            "📈 Overview", "🏷️ Keywords", "💰 Pricing", "📊 Advanced", "📥 Downloads"
+        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+            "📈 Overview", "🏷️ Keywords", "💰 Pricing", "📊 Advanced", "✨ Intelligence","📥 Downloads"
         ])
 
         with tab1:
@@ -73,7 +77,9 @@ class Interface:
         with tab4:
             st.subheader("Advanced Analytics")
         with tab5:
-            st.subheader("Download Reports")
+            st.subheader("AI Recommendation")
+        with tab6:
+            self._show_downloads_tab()
 
     def _show_overview_tab(self, processor):
         st.subheader("Data Overview")
@@ -99,10 +105,12 @@ class Interface:
         col1, col2 = st.columns(2)
 
         with col1:
+            st.subheader("Top 10 Keywords")
             top_keywords_fig = visualizer.create_top_keywords_chart(top_n=10)
             st.plotly_chart(top_keywords_fig, use_container_width=True)
     
         with col2:
+            st.subheader("Keyword Distribution")
             keyword_dist_fig = visualizer.create_keyword_distribution_pie()
             st.plotly_chart(keyword_dist_fig, use_container_width=True)
     
@@ -114,3 +122,36 @@ class Interface:
         keyword_freq = processor.get_keyword_frequency()
         keyword_df = pd.DataFrame(list(keyword_freq.items()), columns=['Keyword', 'Frequency'])
         st.dataframe(keyword_df, use_container_width=True)
+    
+    def _show_downloads_tab(self):
+        st.subheader("Download Reports")
+    
+        if 'export_files' not in st.session_state:
+            st.info("No export files available. Please run the analysis first.")
+            return
+    
+        for file_path in st.session_state.export_files:
+            if os.path.exists(file_path):
+                file_name = os.path.basename(file_path)
+                with open(file_path, 'rb') as f:
+                    st.download_button(
+                        label=f"📄 Download {file_name}",
+                        data=f.read(),
+                        file_name=file_name,
+                        mime='application/octet-stream'
+                    )
+    
+        if st.button("📦 Download All Files (ZIP)"):
+            zip_buffer = io.BytesIO()
+            with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                for file_path in st.session_state.export_files:
+                    if os.path.exists(file_path):
+                        zip_file.write(file_path, os.path.basename(file_path))
+
+            zip_buffer.seek(0)
+            st.download_button(
+                label="📦 Download ZIP File",
+                data=zip_buffer.getvalue(),
+                file_name=f"gig_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip",
+                mime='application/zip'
+            )

@@ -71,7 +71,13 @@ def main():
         export_txt = st.checkbox("Text Reports", value=True)
         
         if st.button("🚀 Start Analysis", type="primary", use_container_width=True):
-            analyzer.run_analysis(keywords_input)
+            analyzer.run_analysis(keywords_input, {
+                'price_analysis': include_price_analysis,
+                'correlation': include_correlation,
+                'advanced_charts': include_advanced_charts,
+                'export_excel': export_excel,
+                'export_txt': export_txt
+            })
 
     if not st.session_state.analysis_complete:
         interface.show_welcome_screen()

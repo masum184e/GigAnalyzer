@@ -9,7 +9,7 @@ class Visualizer:
         self.processor = processor
         self.df = processor.get_dataframe()
 
-    def create_top_keywords_chart(self, top_n: int = config.number_of_gigs) -> go.Figure:
+    def create_top_keywords_chart(self, top_n: int = config.NUMBER_OF_GIGS) -> go.Figure:
         top_keywords = self.processor.get_top_keywords(top_n)
         
         if not top_keywords:
@@ -61,7 +61,7 @@ class Visualizer:
         
         return fig
     
-    def create_keyword_correlation_chart(self, top_n: int = config.number_of_gigs) -> go.Figure:
+    def create_keyword_correlation_chart(self, top_n: int = config.NUMBER_OF_GIGS) -> go.Figure:
         correlations = self.processor.get_keyword_correlations()
         
         if not correlations:

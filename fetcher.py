@@ -3,7 +3,6 @@ from typing import List, Dict
 import config
 
 class Fetcher:
-
     def match_score(self, gig: Dict, keywords: List[str]) -> int:
         text = (
             gig.get("title", "") + " " +
@@ -19,4 +18,4 @@ class Fetcher:
         # Sort with keyword-aware score
         sorted_gigs = sorted(gigs, key=lambda gig: self.match_score(gig, keywords), reverse=True)
 
-        return sorted_gigs[:config.number_of_gigs]
+        return sorted_gigs[:config.NUMBER_OF_GIGS]

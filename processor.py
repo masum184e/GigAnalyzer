@@ -55,7 +55,7 @@ class DataProcessor:
     def get_keyword_frequency(self) -> Dict[str, int]:
         return dict(self.tag_counter.most_common())
     
-    def get_top_keywords(self, n: int = config.number_of_gigs) -> List[Tuple[str, int]]:
+    def get_top_keywords(self, n: int = config.NUMBER_OF_GIGS) -> List[Tuple[str, int]]:
         return self.tag_counter.most_common(n)
     
     def get_unique_tags(self) -> List[str]:
@@ -102,3 +102,26 @@ class DataProcessor:
         
         correlations.sort(key=lambda x: x[2], reverse=True)
         return correlations
+
+    def get_success_metrics(self) -> Dict[str, Any]:
+        high_orders_threshold = self.df['completed_orders'].quantile(0.75)
+        high_rating_threshold = 4.5
+        
+        successful_gigs = self.df[
+            (self.df['completed_orders'] >= high_orders_threshold)
+        ]
+        
+        return {
+            'total_successful_gigs': len(successful_gigs),
+            'success_rate': len(successful_gigs) / len(self.df) * 100,
+            'avg_price_successful': successful_gigs['price'].mean() if len(successful_gigs) > 0 else 0,
+            'common_success_tags': self._get_common_tags_in_subset(successful_gigs),
+        }
+
+    def _get_common_tags_in_subset(self, subset_df: pd.DataFrame, n: int = 10) -> List[Tuple[str, int]]:
+        """Get common tags in a subset of data"""
+        subset_tags = []
+        for tags_str in subset_df['tags']:
+            subset_tags.extend(tags_str.split(', '))
+        
+        return Counter(subset_tags).most_common(n)

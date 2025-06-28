@@ -64,8 +64,8 @@ class Interface:
 
 
         st.subheader("Analysis Summary")
-        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-            "📈 Overview", "🏷️ Keywords", "💰 Pricing", "📊 Advanced", "✨ Intelligence","📥 Downloads"
+        tab1, tab2, tab3, tab4, tab5 = st.tabs([
+            "📈 Overview", "🏷️ Keywords", "💰 Pricing", "✨ Intelligence","📥 Downloads"
         ])
 
         with tab1:
@@ -73,12 +73,10 @@ class Interface:
         with tab2:
             self._show_keywords_tab(processor, visualizer)
         with tab3:
-            st.subheader("Pricing Analysis")
+            self._show_price_analysis(processor, visualizer)
         with tab4:
-            st.subheader("Advanced Analytics")
-        with tab5:
             st.subheader("AI Recommendation")
-        with tab6:
+        with tab5:
             self._show_downloads_tab()
 
     def _show_overview_tab(self, processor):
@@ -155,3 +153,17 @@ class Interface:
                 file_name=f"gig_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip",
                 mime='application/zip'
             )
+
+    def _show_price_analysis(self, processor, visualizer):
+        st.subheader("Pricing Analysis")
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.subheader("Price Distribution")
+            price_dist_fig = visualizer.create_price_distribution_chart()
+            st.plotly_chart(price_dist_fig, use_container_width=True)
+
+        with col2:
+            st.subheader("Price vs Orders")
+            price_orders_fig = visualizer.create_price_vs_orders_scatter()
+            st.plotly_chart(price_orders_fig, use_container_width=True)

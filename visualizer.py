@@ -1,4 +1,5 @@
 import plotly.express as px
+import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from processor import DataProcessor
@@ -105,4 +106,61 @@ class Visualizer:
             yaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
             height=400
         )
+        return fig
+
+    def create_price_distribution_chart(self) -> go.Figure:
+        fig = go.Figure(data=[
+            go.Histogram(
+                x=self.df['price'],
+                nbinsx=20,
+                marker_color='lightblue',
+                opacity=0.7
+            )
+        ])
+        
+        fig.update_layout(
+            title='Price Distribution',
+            xaxis_title='Price ($)',
+            yaxis_title='Number of Gigs',
+            height=400
+        )
+        
+        return fig
+
+    def create_price_vs_orders_scatter(self) -> go.Figure:
+        fig = go.Figure(data=[
+            go.Scatter(
+                x=self.df['price'],
+                y=self.df['completed_orders'],
+                mode='markers',
+                marker=dict(
+                    size=8,
+                    color=self.df['price'],
+                    colorscale='Viridis',
+                    showscale=True,
+                    colorbar=dict(title="Price")
+                ),
+                text=self.df['title'],
+                hovertemplate='<b>%{text}</b><br>Price: $%{x}<br>Orders: %{y}<extra></extra>'
+            )
+        ])
+        
+        # Add trend line
+        z = np.polyfit(self.df['price'], self.df['completed_orders'], 1)
+        p = np.poly1d(z)
+        fig.add_trace(go.Scatter(
+            x=self.df['price'],
+            y=p(self.df['price']),
+            mode='lines',
+            name='Trend Line',
+            line=dict(color='red', dash='dash')
+        ))
+        
+        fig.update_layout(
+            title='Price vs Completed Orders',
+            xaxis_title='Price ($)',
+            yaxis_title='Completed Orders',
+            height=500
+        )
+        
         return fig

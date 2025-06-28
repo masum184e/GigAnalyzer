@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 import os
 from visualizer import Visualizer
+from intelligence import Intelligence
 import io
 import zipfile
 
@@ -29,6 +30,7 @@ class Interface:
 
         processor = st.session_state.processor
         visualizer = Visualizer(processor)
+        intelligence = Intelligence()
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
@@ -75,7 +77,7 @@ class Interface:
         with tab3:
             self._show_price_analysis(processor, visualizer)
         with tab4:
-            st.subheader("AI Recommendation")
+            self._show_ai_recommendation(processor, intelligence)
         with tab5:
             self._show_downloads_tab()
 
@@ -167,3 +169,18 @@ class Interface:
             st.subheader("Price vs Orders")
             price_orders_fig = visualizer.create_price_vs_orders_scatter()
             st.plotly_chart(price_orders_fig, use_container_width=True)
+
+    def _show_ai_recommendation(self, processor, intelligence):
+        st.subheader("AI Recommendation")
+    
+        with st.spinner("Generating SEO-optimized content..."):
+            response = intelligence.generate_optimized_metadata(processor.get_dataframe())
+    
+        if isinstance(response, str):
+            if "Title:" in response and "Description:" in response:
+                st.markdown(response.strip("`").strip())
+            else:
+                st.text(response)
+        else:
+            st.error("Unexpected response format from the AI model.")
+

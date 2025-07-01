@@ -12,8 +12,6 @@ env/
 .venv/
 .env/
 
-# Custom
-output/
 
 # Environment variable files
 *.env
